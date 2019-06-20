@@ -990,6 +990,7 @@ PJ_DECL(pj_status_t) pj_event_create(pj_pool_t *pool, const char *name,
  * @return zero if successfull.
  */
 PJ_DECL(pj_status_t) pj_event_wait(pj_event_t *event);
+PJ_DECL(pj_bool_t) pj_event_wait_for(pj_event_t *event, long timeout);
 
 /**
  * Try wait for event object to be signalled.

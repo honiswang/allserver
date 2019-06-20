@@ -474,12 +474,12 @@
 #   if PJ_HAS_STDINT_H
 #       include <stdint.h>
 #       if (UINTPTR_MAX == 0xffffffffffffffff)
-#           define PJ_LOG_SENDER_WIDTH  22
+#           define PJ_LOG_SENDER_WIDTH  32
 #       else
-#           define PJ_LOG_SENDER_WIDTH  14
+#           define PJ_LOG_SENDER_WIDTH  34
 #       endif
 #   else
-#       define PJ_LOG_SENDER_WIDTH  14
+#       define PJ_LOG_SENDER_WIDTH  34
 #   endif
 #endif
 

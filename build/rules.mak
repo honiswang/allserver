@@ -173,6 +173,10 @@ $(OBJDIR)/%$(OBJEXT): $(SRCDIR)/%.cpp
 	$(CXX) $($(APP)_CXXFLAGS) \
 		$(CC_OUT)$(subst /,$(HOST_PSEP),$@) \
 		$(subst /,$(HOST_PSEP),$<)
+$(OBJDIR)/%$(OBJEXT): $(SRCDIR)/%.cxx
+	$(CXX) $($(APP)_CXXFLAGS) \
+		$(CC_OUT)$(subst /,$(HOST_PSEP),$@) \
+		$(subst /,$(HOST_PSEP),$<)
 
 $(OBJDIR)/%$(OBJEXT): $(SRCDIR)/%.cc
 	$(CXX) $($(APP)_CXXFLAGS) \

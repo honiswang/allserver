@@ -1807,6 +1807,23 @@ PJ_DEF(pj_status_t) pj_event_wait(pj_event_t *event)
     pthread_mutex_unlock(&event->mutex.mutex);
     return PJ_SUCCESS;
 }
+PJ_DEF(pj_bool_t) pj_event_wait_for(pj_event_t *event , long timeout)
+{
+    struct timeval now;
+    struct timespec outtime;
+	long ret =-1;
+    pthread_mutex_lock(&event->mutex.mutex);
+    event->threads_waiting++;
+    gettimeofday(&now, NULL);
+    outtime.tv_sec = now.tv_sec + timeout/1000;
+    outtime.tv_nsec = now.tv_usec + (timeout%1000)*1000000;
+    ret = pthread_cond_timedwait(&event->cond, &event->mutex.mutex, &outtime);
+    event->threads_waiting--;
+    event_on_one_release(event);
+    pthread_mutex_unlock(&event->mutex.mutex);
+
+    return ret==0?PJ_TRUE:PJ_FALSE;
+}
 
 /*
  * pj_event_trywait()

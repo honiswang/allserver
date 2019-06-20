@@ -1,6 +1,6 @@
 export CC = $(CROSS_COMPILE)gcc -c
 export AR = $(CROSS_COMPILE)ar rv 
-export LD = $(CROSS_COMPILE)gcc
+export LD = $(CROSS_COMPILE)g++
 export LDOUT = -o 
 export RANLIB = $(CROSS_COMPILE)ranlib
 
