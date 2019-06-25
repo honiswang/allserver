@@ -327,7 +327,7 @@ PJ_DEF(pj_status_t) pj_ioqueue_register_sock2(pj_pool_t *pool,
     }
 */
     /* os_epoll_ctl. */
-    ev.events = EPOLLIN | EPOLLERR;
+    ev.events = EPOLLIN | EPOLLERR | EPOLLET;
     ev.epoll_data = (epoll_data_type)key;
     status = os_epoll_ctl(ioqueue->epfd, EPOLL_CTL_ADD, sock, &ev);
     if (status < 0) {
@@ -517,7 +517,7 @@ static void ioqueue_remove_from_set( pj_ioqueue_t *ioqueue,
     if (event_type == WRITEABLE_EVENT) {
 	struct epoll_event ev;
 
-	ev.events = EPOLLIN | EPOLLERR;
+	ev.events = EPOLLIN | EPOLLERR | EPOLLET;
 	ev.epoll_data = (epoll_data_type)key;
 	os_epoll_ctl( ioqueue->epfd, EPOLL_CTL_MOD, key->fd, &ev);
     }	
@@ -536,7 +536,7 @@ static void ioqueue_add_to_set( pj_ioqueue_t *ioqueue,
     if (event_type == WRITEABLE_EVENT) {
 	struct epoll_event ev;
 
-	ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;
+	ev.events = EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLET;
 	ev.epoll_data = (epoll_data_type)key;
 	os_epoll_ctl( ioqueue->epfd, EPOLL_CTL_MOD, key->fd, &ev);
     }	
@@ -623,13 +623,11 @@ PJ_DEF(int) pj_ioqueue_poll( pj_ioqueue_t *ioqueue, const pj_time_val *timeout)
 	pj_ioqueue_key_t *h = (pj_ioqueue_key_t*)(epoll_data_type)
 				events[i].epoll_data;
 
-	TRACE_((THIS_FILE, "event %d: events=%d", i, events[i].events));
 
 	/*
 	 * Check readability.
 	 */
-	if ((events[i].events & EPOLLIN) && 
-	    (key_has_pending_read(h) || key_has_pending_accept(h)) && !IS_CLOSING(h) ) {
+	if ((events[i].events & EPOLLIN) && !IS_CLOSING(h) ) {
 
 #if PJ_IOQUEUE_HAS_SAFE_UNREG
 	    increment_counter(h);
@@ -643,7 +641,7 @@ PJ_DEF(int) pj_ioqueue_poll( pj_ioqueue_t *ioqueue, const pj_time_val *timeout)
 	/*
 	 * Check for writeability.
 	 */
-	if ((events[i].events & EPOLLOUT) && key_has_pending_write(h) && !IS_CLOSING(h)) {
+	if ((events[i].events & EPOLLOUT) && !IS_CLOSING(h)) {
 
 #if PJ_IOQUEUE_HAS_SAFE_UNREG
 	    increment_counter(h);
@@ -750,13 +748,19 @@ PJ_DEF(int) pj_ioqueue_poll( pj_ioqueue_t *ioqueue, const pj_time_val *timeout)
 	pj_thread_sleep(msec);
     }
 
-    TRACE_((THIS_FILE, "     poll: count=%d events=%d processed=%d",
-		       count, event_cnt, processed_cnt));
+    TRACE_((THIS_FILE, "     poll: count=%d events=%d processed=%d",count, event_cnt, processed_cnt));
 
     pj_get_timestamp(&t1);
-    TRACE_((THIS_FILE, "ioqueue_poll() returns %d, time=%d usec",
-		       processed, pj_elapsed_usec(&t2, &t1)));
+    TRACE_((THIS_FILE, "ioqueue_poll() returns %d, time=%d usec",processed_cnt, pj_elapsed_usec(&t2, &t1)));
 
-    return processed_cnt;
+    return count;
 }
 
+char * pj_ioqueue_getbuf(pj_ioqueue_op_key_t *op_key,char **buf, pj_ssize_t *length)
+{
+	struct read_operation *read_op;
+	read_op = (struct read_operation *)op_key;	
+	*buf = read_op->buf;
+	*length = read_op->size;
+	return read_op->buf;
+}

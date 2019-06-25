@@ -840,7 +840,7 @@ PJ_DECL(pj_status_t) pj_ioqueue_sendto( pj_ioqueue_key_t *key,
 					const pj_sockaddr_t *addr,
 					int addrlen);
 
-
+char * pj_ioqueue_getbuf(pj_ioqueue_op_key_t *op_key, char **buf, pj_ssize_t *length);
 /**
  * !}
  */

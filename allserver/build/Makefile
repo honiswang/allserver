@@ -24,7 +24,7 @@ export _LDFLAGS := $(CC_LDFLAGS) $(OS_LDFLAGS) $(M_LDFLAGS) $(HOST_LDFLAGS) \
 # Defines for building ALLSERVER
 #
 export ALLSERVER_SRCDIR = ../src/allserver
-export ALLSERVER_OBJS += main.o sync.o pstring.o singleton.o job.o testjob.o
+export ALLSERVER_OBJS += main.o sync.o pstring.o singleton.o job.o testjob.o common.o serverjob.o
 export ALLSERVER_CFLAGS += $(PJ_CFLAGS) $(CFLAGS)
 export ALLSERVER_CXXFLAGS += $(PJ_CXXFLAGS) $(CFLAGS) -DDEBUG
 export ALLSERVER_LDFLAGS += $(PJ_LDFLAGS) $(PJ_LDLIBS) $(LDFLAGS)

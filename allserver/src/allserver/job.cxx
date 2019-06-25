@@ -58,13 +58,13 @@ class PThread
 			pj_thread_create(m_pool,"threadjob",PThread::thmain,this,4096,PJ_THREAD_SUSPENDED,&m_thread);
 			pj_thread_set_prio(m_thread,pride);
 		}
-		virtual ~PThread(){}
+		virtual ~PThread(){pj_thread_destroy(m_thread);}
 		virtual void Main( ) {}
 		
 		void Resume() { pj_thread_resume(m_thread); }
 		void SetNoAutoDelete() { m_pro = NoAutoDelete;}
 		void WaitForTermination(int timeout) { }
-	 	PThreadIdentifier GetThreadId() { return pj_getpid();}
+	 	PThreadIdentifier GetThreadId() { return pthread_self();}
 		static int thmain(void * obj) {
 			((PThread *)obj)->Main();
 		}
@@ -197,7 +197,7 @@ Worker::~Worker()
 void Worker::Main()
 {
 	m_id = GetThreadId();
-	PJ_LOG(5, (__FILE__, "JOB\tWorker %d started", m_id));
+	PJ_LOG(5, (__FILE__, "JOB\tWorker %u started", m_id));
 
 	while (!m_closed) {
 		bool timedout = false;
@@ -205,7 +205,7 @@ void Worker::Main()
 		if (m_job == NULL) {
 			timedout = !m_wakeupSync.Wait(m_idleTimeout);
 			if (timedout) {
-				PJ_LOG(3, (__FILE__, "JOB\tIdle timeout for Worker %d ",m_id));
+				PJ_LOG(3, (__FILE__, "JOB\tIdle timeout for Worker %u ",m_id));
 			}
 		}
 		// terminate this worker if closed explicitly or idle timeout expired
@@ -215,7 +215,7 @@ void Worker::Main()
 		}
 
 		if (m_job) {
-			PJ_LOG(3, (__FILE__, "JOB\tStarting Job  %s at Worker thread %d",(const char *)m_job->GetName(), m_id));
+			PJ_LOG(3, (__FILE__, "JOB\tStarting Job  %s at Worker thread %u",(const char *)m_job->GetName(), m_id));
 
 			m_job->Run();
 
@@ -229,12 +229,12 @@ void Worker::Main()
 		}
 	}
 
-	PJ_LOG(3, (__FILE__, "JOB\tWorker %d closed", m_id));
+	PJ_LOG(3, (__FILE__, "JOB\tWorker %u closed", m_id));
 
 	// remove this Worker from the list of workers
 	m_agent->Remove(this);
 	if (m_job) {
-		PJ_LOG(1, (__FILE__, "JOB\tActive Job %s left at closing Worker thread %d",(const char *)m_job->GetName(),m_id));
+		PJ_LOG(1, (__FILE__, "JOB\tActive Job %s left at closing Worker thread %u",(const char *)m_job->GetName(),m_id));
 	}
 }
 
@@ -266,7 +266,7 @@ void Worker::Destroy()
 	m_closed = true;
 	m_wakeupSync.Signal();
 
-	PJ_LOG(3, (__FILE__, "JOB\tWaiting for Worker thread  %d termination", m_id));
+	PJ_LOG(3, (__FILE__, "JOB\tWaiting for Worker thread  %u termination", m_id));
 	WaitForTermination(5 * 1000);	// max. wait 5 sec.
 }
 
