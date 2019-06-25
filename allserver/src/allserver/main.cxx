@@ -70,7 +70,7 @@ int main()
 		{
 			read(fd[0],buf,sizeof(buf));
 			cout<<"get buf:"<<buf<<endl;
-			if(strcmp(buf,"end") == 0)
+			if(strncmp(buf,"end",3) == 0)
 			{
 				break;
 			}
