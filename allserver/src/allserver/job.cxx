@@ -15,6 +15,7 @@
 //////////////////////////////////////////////////////////////////
 
 #include <pjlib.h>
+#include <pthread.h>
 #include "pstring.h"
 #include "sync.h"
 #include "stl_supp.h"
