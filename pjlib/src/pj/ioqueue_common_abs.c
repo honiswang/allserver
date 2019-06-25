@@ -1375,5 +1375,12 @@ PJ_DEF(pj_status_t) pj_ioqueue_unlock_key(pj_ioqueue_key_t *key)
     else
 	return pj_lock_release(key->lock);
 }
-
+char * pj_ioqueue_getbuf(pj_ioqueue_op_key_t *op_key,char **buf, pj_ssize_t *length)
+{
+	struct read_operation *read_op;
+	read_op = (struct read_operation *)op_key;	
+	*buf = read_op->buf;
+	*length = read_op->size;
+	return read_op->buf;
+}
 

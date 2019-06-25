@@ -756,11 +756,3 @@ PJ_DEF(int) pj_ioqueue_poll( pj_ioqueue_t *ioqueue, const pj_time_val *timeout)
     return count;
 }
 
-char * pj_ioqueue_getbuf(pj_ioqueue_op_key_t *op_key,char **buf, pj_ssize_t *length)
-{
-	struct read_operation *read_op;
-	read_op = (struct read_operation *)op_key;	
-	*buf = read_op->buf;
-	*length = read_op->size;
-	return read_op->buf;
-}
