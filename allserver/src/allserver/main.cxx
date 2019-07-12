@@ -40,7 +40,7 @@ int main()
 		cout<<"pipo error"<<endl;
 		return 1;
 	}
-
+start:
 	pid_t pid = fork();
 	pid_t pw;
 	int status = 0;
@@ -98,6 +98,8 @@ int main()
 		}
 		pw = waitpid(pid,&status,0);
 		cout<<"child hello world "<<pw<<" end status:"<<status<<endl;
+		if(status != 0)
+			goto start;
 		return 0;
 	}
 }

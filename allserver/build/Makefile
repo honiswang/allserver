@@ -14,7 +14,9 @@ export _CFLAGS 	:= $(CC_CFLAGS) $(OS_CFLAGS) $(HOST_CFLAGS) $(M_CFLAGS) \
 		   $(CC_INC)../../pjlib/include \
 		   $(CC_INC)../../pjlib-util/include \
 		   $(CC_INC)../../pjnath/include \
-		   $(CC_INC)../../pjmedia/include
+		   $(CC_INC)../../pjmedia/include \
+		   $(CC_INC)../../third_party/boost \
+		   $(CC_INC)../../third_party
 export _CXXFLAGS:= $(_CFLAGS) $(CC_CXXFLAGS) $(OS_CXXFLAGS) $(M_CXXFLAGS) \
 		   $(HOST_CXXFLAGS) $(CXXFLAGS) 
 export _LDFLAGS := $(CC_LDFLAGS) $(OS_LDFLAGS) $(M_LDFLAGS) $(HOST_LDFLAGS) \
@@ -24,9 +26,9 @@ export _LDFLAGS := $(CC_LDFLAGS) $(OS_LDFLAGS) $(M_LDFLAGS) $(HOST_LDFLAGS) \
 # Defines for building ALLSERVER
 #
 export ALLSERVER_SRCDIR = ../src/allserver
-export ALLSERVER_OBJS += main.o sync.o pstring.o singleton.o job.o testjob.o common.o serverjob.o
+export ALLSERVER_OBJS += main.o sync.o pstring.o singleton.o job.o testjob.o common.o serverjob.o httphandle.o
 export ALLSERVER_CFLAGS += $(PJ_CFLAGS) $(CFLAGS)
-export ALLSERVER_CXXFLAGS += $(PJ_CXXFLAGS) $(CFLAGS) -DDEBUG
+export ALLSERVER_CXXFLAGS += $(PJ_CXXFLAGS) $(_CFLAGS) -DDEBUG
 export ALLSERVER_LDFLAGS += $(PJ_LDFLAGS) $(PJ_LDLIBS) $(LDFLAGS)
 ifeq ($(EXCLUDE_APP),0)
 export ALLSERVER_EXE:=allserver-$(TARGET_NAME)$(HOST_EXE)

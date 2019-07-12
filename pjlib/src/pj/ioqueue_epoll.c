@@ -327,7 +327,7 @@ PJ_DEF(pj_status_t) pj_ioqueue_register_sock2(pj_pool_t *pool,
     }
 */
     /* os_epoll_ctl. */
-    ev.events = EPOLLIN | EPOLLERR | EPOLLET;
+    ev.events = EPOLLIN | EPOLLERR | EPOLLET | EPOLLOUT;
     ev.epoll_data = (epoll_data_type)key;
     status = os_epoll_ctl(ioqueue->epfd, EPOLL_CTL_ADD, sock, &ev);
     if (status < 0) {

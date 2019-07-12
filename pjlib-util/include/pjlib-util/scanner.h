@@ -428,6 +428,8 @@ PJ_DECL(void) pj_scan_get_until_ch( pj_scanner *scanner,
 PJ_DECL(void) pj_scan_get_until_chr( pj_scanner *scanner,
 				     const char *until_spec, pj_str_t *out);
 
+PJ_DEF(void) pj_scan_get_until_chr_all( pj_scanner *scanner,
+				     const char *until_spec, pj_str_t *out);
 /** 
  * Advance the scanner N characters, and skip whitespace
  * if necessary.

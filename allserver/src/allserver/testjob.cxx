@@ -60,10 +60,17 @@ void testjob::init(int num)
 			pj_str_t src;
 			pj_sockaddr_parse(pj_AF_INET(),0,pj_strset2(&src,pj_print(m_pool,"0.0.0.0:%d",m_port)),&addr),
 			std::cout<<"address>><<:"<<pj_sockaddr_print(&addr,(char *)pj_pool_zalloc(m_pool,100),100,1)<<std::endl;
+			pj_int32_t val = 1;
+			pj_sock_setsockopt(sock, pj_SOL_SOCKET(),pj_SO_REUSEADDR(),&val,sizeof(val));
 			status = pj_sock_bind(sock,&addr,pj_sockaddr_get_len(&addr));
+			while(status !=PJ_SUCCESS)
+			{
+				PJ_LOG(1,(__FILE__,"bind address %s error", pj_sockaddr_print(&addr,(char *)pj_pool_zalloc(m_pool,100),100,1)));
+				status = pj_sock_bind(sock,&addr,pj_sockaddr_get_len(&addr));
+				pj_thread_sleep(1000);
+			}
 			status = pj_sock_listen(sock, 1024);
 			pj_ioqueue_register_sock(m_pool, m_ioqueue,sock,this,&cb, &m_key);	
-			
 		}
 	}
 	for(int i=0;i<num;i++)
